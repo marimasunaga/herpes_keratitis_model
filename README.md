@@ -4,8 +4,6 @@ Code repository for image analysis of herpes keratitis lesions. This repository 
 
 ## Overview
 
-## Overview
-
 This repository contains all simulation and analysis codes used to generate the
 figures and supplementary movies in the manuscript. Each directory corresponds
 to a specific figure or movie and includes only
