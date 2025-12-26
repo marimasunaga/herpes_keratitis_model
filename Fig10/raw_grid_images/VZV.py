@@ -1,0 +1,214 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.fft import fft2, ifft2
+import gc
+from scipy.ndimage import binary_dilation
+
+# Definition of the boundary term B_{i,j}(t)
+def boundary(u):
+    """
+    Compute the boundary mask B_{i,j}(t) defined as:
+        B_{i,j}(t) = min(1, u_{i-1,j}(t) + u_{i+1,j}(t) + u_{i,j-1}(t) + u_{i,j+1}(t))
+    where u is a 2D binary field (0 or 1).
+    """
+    # Shift u in four directions (up, down, left, right)
+    u_up    = np.roll(u, shift=-1, axis=0)
+    u_down  = np.roll(u, shift= 1, axis=0)
+    u_left  = np.roll(u, shift=-1, axis=1)
+    u_right = np.roll(u, shift= 1, axis=1)
+
+    # Compute the sum of the four neighboring cells
+    boundary_mask = u_up + u_down + u_left + u_right
+
+    # Clip the values to obtain B_{i,j}(t) = min(1, sum)
+    boundary_mask = np.clip(boundary_mask, 0, 1)
+
+    # Apply boundary mask only to uninfected cells 
+    boundary_mask = (1 - u) * boundary_mask
+
+    return boundary_mask
+
+def boundary_n(u, n):
+    """
+    Compute B^{(n)}_{i,j}(t) according to the definition:
+        B^{(n)}_{i,j}(t) = u_{i,j}(t) * min(1, sum_{1 <= |k|+|l| <= n} (1 - u_{i+k,j+l}(t)) )
+
+    Parameters
+    ----------
+    u : 2D numpy array
+        Binary array representing infected (1) and uninfected (0) cells.
+    n : int
+        Neighborhood radius (Manhattan distance).
+
+    Returns
+    -------
+    Bn : 2D numpy array
+        Boundary mask indicating infected cells adjacent (within n) to uninfected cells.
+    """
+
+    # Compute mask of uninfected cells (1 - u)
+    uninfected = 1 - u
+
+    # Dilate uninfected region by n (Manhattan neighborhood)
+    # This marks all cells within distance n of an uninfected cell
+    # Structure defines 4-neighborhood (|k| + |l| = 1)
+    structure = np.array([[0,1,0],
+                          [1,1,1],
+                          [0,1,0]])
+    dilated_uninfected = binary_dilation(uninfected, structure=structure, iterations=n).astype(int)
+
+    # B^{(n)}_{i,j}(t) = u_{i,j}(t) * min(1, dilated_uninfected)
+    # → infected cells that are within n steps of uninfected cells
+    Bn = u * np.clip(dilated_uninfected, 0, 1)
+
+    return Bn
+
+# Simulation of u and v fields
+def uv_simulation(alpha, beta, gamma, delta, dv, dw, C, n):
+    """
+    Simulate the time evolution of u_{i,j}(t) and v_{i,j}(t)
+    according to the discrete forms of the governing equations:
+    u_{i,j}(t+dt) = u_{i,j}(t) + B_{i,j}(t) * H(η_{i,j}(t) < dt * (α - β v_{i,j}(t))), (Eq. u)
+    where H(x) is the Heaviside step function.
+    v_{i,j}(t+dt) = dt * (γ S_{i,j}(t) - δ v_{i,j}(t) + w_{i,j}(t+dt)) + D_v Δv_{i,j}(t+dt),           (Eq. v)
+    where (Type E): S_{i,j}(t) = B_{i,j}(t) + B^n_{i,j}(t).                            (Eq. S_E)
+    w_{i,j}(t+dt) = dt * C + D_w Δw_{i,j}(t+dt) (if (i = 0 or -1) or (j = 0 or -1)), 
+                    D_w Δw_{i,j}(t+dt) (otherwise).                                    (Eq. w)
+
+    Parameters
+    ----------
+    alpha, beta, gamma, delta : float
+        Reaction parameters.
+    dv : float
+        Diffusion coefficient of v.
+
+    Returns
+    -------
+    u : 2D ndarray
+        Final state of u field.
+    i : int
+        The number of time steps completed.
+    """
+    # Fix random seed for reproducibility
+    np.random.seed(0)
+
+    # Initialize u field with zeros
+    uI = np.zeros((grid_number, grid_number))
+
+    # Initial condition: one infected cell at the center
+    uI[grid_number//2, grid_number//2] = 1
+
+    # Define the discrete diffusion kernel for v (Laplace operator)
+    kv=np.zeros((grid_number, grid_number))
+    kv[0, 0] = 1 + 4 * dt * dv / dx**2
+    kv[1, 0] = kv[-1, 0] = kv[0, 1] = kv[0, -1] = -dt * dv / dx**2
+
+    # Compute the Fourier transform of the kernel
+    kvhat = fft2(kv)
+    kvhatinverse = 1 / kvhat
+
+    # Define the discrete diffusion kernel for w (Laplace operator)
+    kw=np.zeros((grid_number, grid_number))
+    kw[0, 0] = 1 + 4 * dt * dw / dx**2
+    kw[1, 0] = kw[-1, 0] = kw[0, 1] = kw[0, -1] = -dt * dw / dx**2
+
+    # Compute the Fourier transform of the kernel
+    kwhat = fft2(kw)
+    kwhatinverse = 1 / kwhat
+    
+    # Initialize fields
+    u = uI.copy()
+    v = np.zeros((grid_number, grid_number))
+    w = np.zeros((grid_number, grid_number))
+
+    # --- Time iteration ---
+    for t in range(loopnumber):
+        # Boundary term B_{i,j}(t) as defined in Eq. (B)
+        b = boundary(u)
+        bn = boundary_n(u, n)
+
+        # Update rule for u_{i,j}(t):
+        eta = np.random.rand(grid_number, grid_number)
+        h = (b * (eta < dt * (alpha - beta * v))).astype(float)
+        u = u + h
+        # Cytokine source term (Type E): S_{i,j}(t) = B_{i,j}(t) + B^n_{i,j}(t)
+        S = b + bn
+
+        # Update v and w according to Eq. (v) and Eq. (w)
+        v = np.real(ifft2(fft2(dt * (gamma * S - delta * v) + v) * kvhatinverse))
+        
+        w[0,:] += C
+        w[-1,:] += C
+        w[:,0] += C
+        w[:,-1] += C
+        w = np.real(ifft2(fft2(dt * w) * kwhatinverse))
+
+        v += w
+
+        # Early stopping if the infection reaches the domain boundary
+        if (np.any(u[grid_number//10, :] == 1) or
+            np.any(u[9*grid_number//10, :] == 1) or
+            np.any(u[:, grid_number//10] == 1) or
+            np.any(u[:, 9*grid_number//10] == 1)):
+            print(f"Calculation stopped at iteration {t}")
+            break
+
+        if t == loopnumber - 1:
+            print(loopnumber)
+
+    return u, v, t
+
+# ==============================================================
+# Parameter settings
+# ==============================================================
+domain_size = 12.0                      # Domain size, size of the human cornea (in mm)
+dx = 0.012                              # Spatial step, size of a corneal epithelial cell (in mm)
+dt = 1.0                                # Time step, \approx 0.5$ hours; estimated from visual similarity to ex vivo lesion data
+dv = 0.05                               # Diffusion coefficient of cytokine
+dw = 50                                 # Effective diffusion coefficient representing immune-cell derived cytokine
+loopnumber = 10000                      # Maximum number of iterations
+grid_number = round(domain_size / dx)   # Number of lattice points per side, the number of cells along one edge
+
+alpha = 0.5 #Net infection drive coefficient
+beta = 1.0 #Infection inhibition coefficient (cytokine-dependent; e.g., cellular sensitivity to cytokines)
+gamma_values = np.arange(1.0, 2.01, 0.5) #Cytokine secretion rate
+delta = 0.5 #Cytokine degradation rate
+n = 10 #The number of layers producing cytokine
+c_values = np.arange(0.0, 0.11, 0.01) #Cytokine secretion rate
+
+# Create output directory if it does not exist
+import os
+# Get the absolute path of the directory where this script is located
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Create the target directory inside the script directory
+output_dir = script_dir
+os.makedirs(output_dir, exist_ok=True)
+
+# ==============================================================
+# Main parameter loop
+# ==============================================================
+for gamma in gamma_values:
+    for C in c_values:
+
+        # Run simulation
+        u, v, t = uv_simulation(alpha, beta, gamma, delta, dv, dw, C, n)
+        # Save figure with descriptive filename
+        filename = os.path.join(
+            output_dir,
+            f"plot_a{alpha:.3f}_b{beta:.3f}_g{gamma:.3f}_"
+            f"d{delta:.3f}_Dv{dv:.3f}_DW{dw}_C{C:.3f}_iter{t}.png"
+        )
+        plt.imsave(
+            filename,
+            u,
+            cmap='gray',
+            format='png'
+        )
+
+        # Explicitly delete temporary variables to release memory
+        del u, v, t
+
+        # Invoke the garbage collector to ensure complete memory cleanup
+        gc.collect()
+

@@ -1,0 +1,121 @@
+Data Count Changes by Filtering Process
+============================================================
+
+TypeA:
+  Number of processed images: 168
+  Before filter #6 (initial branch count): 4845
+  After filter #6 (after distance filter): 3446
+  After filter #7 (after removing overlaps): 456
+  After filter #8 (after selecting top N): 388
+  Reduction rate by filter #6: 28.88%
+  Reduction rate by filter #7: 86.77%
+  Reduction rate by filter #8: 14.91%
+  Total reduction rate: 91.99%
+
+TypeB:
+  Number of processed images: 190
+  Before filter #6 (initial branch count): 3065
+  After filter #6 (after distance filter): 1983
+  After filter #7 (after removing overlaps): 333
+  After filter #8 (after selecting top N): 282
+  Reduction rate by filter #6: 35.30%
+  Reduction rate by filter #7: 83.21%
+  Reduction rate by filter #8: 15.32%
+  Total reduction rate: 90.80%
+
+TypeC:
+  Number of processed images: 108
+  Before filter #6 (initial branch count): 2181
+  After filter #6 (after distance filter): 1252
+  After filter #7 (after removing overlaps): 259
+  After filter #8 (after selecting top N): 214
+  Reduction rate by filter #6: 42.60%
+  Reduction rate by filter #7: 79.31%
+  Reduction rate by filter #8: 17.37%
+  Total reduction rate: 90.19%
+
+TypeD:
+  Number of processed images: 188
+  Before filter #6 (initial branch count): 5682
+  After filter #6 (after distance filter): 3913
+  After filter #7 (after removing overlaps): 548
+  After filter #8 (after selecting top N): 436
+  Reduction rate by filter #6: 31.13%
+  Reduction rate by filter #7: 86.00%
+  Reduction rate by filter #8: 20.44%
+  Total reduction rate: 92.33%
+
+TypeE:
+  Number of processed images: 190
+  Before filter #6 (initial branch count): 2924
+  After filter #6 (after distance filter): 1853
+  After filter #7 (after removing overlaps): 325
+  After filter #8 (after selecting top N): 275
+  Reduction rate by filter #6: 36.63%
+  Reduction rate by filter #7: 82.46%
+  Reduction rate by filter #8: 15.38%
+  Total reduction rate: 90.60%
+
+modified_model:
+  Number of processed images: 55
+  Before filter #6 (initial branch count): 4933
+  After filter #6 (after distance filter): 4159
+  After filter #7 (after removing overlaps): 217
+  After filter #8 (after selecting top N): 164
+  Reduction rate by filter #6: 15.69%
+  Reduction rate by filter #7: 94.78%
+  Reduction rate by filter #8: 24.42%
+  Total reduction rate: 96.68%
+
+============================================================
+Summary (Total across all directories):
+  Number of processed images: 899
+  Before filter #6 (initial branch count): 23630
+  After filter #6 (after distance filter): 16606
+  After filter #7 (after removing overlaps): 2138
+  After filter #8 (after selecting top N): 1759
+  Reduction rate by filter #6: 29.72%
+  Reduction rate by filter #7: 87.13%
+  Reduction rate by filter #8: 17.73%
+  Total reduction rate: 92.56%
+
+============================================================
+Additional Filtering in 5graph_distance_map.py
+============================================================
+Filter condition: node_0 must be in [10, 20)
+
+TypeA:
+  Before filter (node_0 condition): 388
+  After filter (node_0 in [10, 20)): 161
+  Reduction rate: 58.51%
+
+TypeB:
+  Before filter (node_0 condition): 278
+  After filter (node_0 in [10, 20)): 63
+  Reduction rate: 77.34%
+
+TypeC:
+  Before filter (node_0 condition): 214
+  After filter (node_0 in [10, 20)): 85
+  Reduction rate: 60.28%
+
+TypeD:
+  Before filter (node_0 condition): 436
+  After filter (node_0 in [10, 20)): 80
+  Reduction rate: 81.65%
+
+TypeE:
+  Before filter (node_0 condition): 275
+  After filter (node_0 in [10, 20)): 47
+  Reduction rate: 82.91%
+
+modified_model:
+  Before filter (node_0 condition): 164
+  After filter (node_0 in [10, 20)): 125
+  Reduction rate: 23.78%
+
+============================================================
+Summary (Total across all models):
+  Before filter (node_0 condition): 1755
+  After filter (node_0 in [10, 20)): 561
+  Total reduction rate: 68.03%

@@ -1,0 +1,10 @@
+Statistical Summary
+====================
+
+        Model   N  Effect Size (d)    Power      P-value Significance Normality               Method
+        TypeA 161         0.857945 1.000000 2.647500e-21          ***       Yes        paired t-test
+        TypeB  63         0.846782 1.000000 3.259284e-09          ***       Yes        paired t-test
+        TypeC  85         1.131589 1.000000 3.973101e-17          ***       Yes        paired t-test
+        TypeD  80         0.485101 0.996052 9.216008e-06          ***        No Wilcoxon signed-rank
+        TypeE  47         0.739582 0.999595 3.469955e-06          ***       Yes        paired t-test
+ModifiedModel 125         0.361320 0.991170 4.659397e-05          ***       Yes        paired t-test

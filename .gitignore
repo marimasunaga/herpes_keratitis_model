@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Large data files (uncomment if you want to exclude generated images/movies)
+# *.png
+# *.jpg
+# *.jpeg
+# *.mp4
+# *.npy
+# *.npz
+
+# Temporary files
+*.tmp
+*.log
+
