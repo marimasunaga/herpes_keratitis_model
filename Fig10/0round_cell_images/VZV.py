@@ -12,7 +12,7 @@ from scipy.ndimage import binary_dilation
 def boundary(u):
     """
     Compute the boundary mask B_{i,j}(t) defined as:
-        B_{i,j}(t) = min(1, u_{i-1,j}(t) + u_{i+1,j}(t) + u_{i,j-1}(t) + u_{i,j+1}(t))
+        B_{i,j}(t) = (1 - u_{i,j}(t)) min(1, u_{i-1,j}(t) + u_{i+1,j}(t) + u_{i,j-1}(t) + u_{i,j+1}(t))
     where u is a 2D binary field (0 or 1).
     """
     # Shift u in four directions (up, down, left, right)
