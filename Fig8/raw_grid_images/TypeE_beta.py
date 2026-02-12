@@ -125,7 +125,7 @@ def uv_simulation(alpha, beta, gamma, delta, dv, n):
         # Update v according to Eq. (v)
         v = np.real(ifft2(fft2(dt * (gamma * S - delta * v) + v) * kvhatinverse))
 
-        # Early stopping if the infection reaches the domain boundary
+        # Early stopping when the infection expands to ±10% from the domain center
         if (np.any(u[4*grid_number//10, :] == 1) or
             np.any(u[6*grid_number//10, :] == 1) or
             np.any(u[:,4*grid_number//10] == 1) or
