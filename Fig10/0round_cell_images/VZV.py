@@ -149,7 +149,7 @@ def uv_simulation(alpha, beta, gamma, delta, dv, dw, C, n):
 
         v += w
 
-        # Early stopping if the infection reaches the domain boundary
+        # Early stopping when the infection expands to ±40% from the domain center
         if (np.any(u[grid_number//10, :] == 1) or
             np.any(u[9*grid_number//10, :] == 1) or
             np.any(u[:, grid_number//10] == 1) or
