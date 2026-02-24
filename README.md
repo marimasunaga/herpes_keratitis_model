@@ -1,5 +1,7 @@
 # Dendritic Keratitis Lesion Pattern Model
 
+**Latest release:** [v1.0](https://github.com/marimasunaga/herpes_keratitis_model/releases/tag/v1.0) — code version used in the paper.
+
 Code repository for image analysis of herpes keratitis lesions. This repository contains Python scripts for running the mathematical models, generating simulation datasets, and performing image processing, analyzing, and visualizing dendritic and geographic patterns lesion patterns.
 
 ## Overview
