@@ -1,4 +1,4 @@
-# code_for_paper_R1
+# Dendritic Keratitis Lesion Pattern Model
 
 Code repository for image analysis of herpes keratitis lesions. This repository contains Python scripts for running the mathematical models, generating simulation datasets, and performing image processing, analyzing, and visualizing dendritic and geographic patterns lesion patterns.
 
@@ -129,5 +129,8 @@ See `FigS5S6/README.md` for detailed instructions on clinical image processing.
 
 ## Citation
 
-If you use this code in your research, please cite the associated paper.
+If you use this code in your research, please cite the associated paper:
+
+- **DOI**: https://doi.org/10.1007/s11538-026-01598-3
+- **Citation**: Masunaga M, Shimatani R, Oda Y, Miura T, Shinozaki K, Iida T. Mathematical Modeling of Lesion Pattern Formation in Dendritic Keratitis. *Bulletin of Mathematical Biology* (2026). https://doi.org/10.1007/s11538-026-01598-3
 
