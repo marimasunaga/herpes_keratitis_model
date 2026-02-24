@@ -56,7 +56,7 @@ def alpha_shape(points, alpha):
 # --------------------------------------------------------------
 # Process a single image
 # --------------------------------------------------------------
-def process_single_image(input_path, output_path, alpha=0.02):
+def process_single_image(input_path, output_path, alpha):
 
     image = cv2.imread(input_path, cv2.IMREAD_GRAYSCALE)
     if image is None:
@@ -114,7 +114,7 @@ def process_single_image(input_path, output_path, alpha=0.02):
 # --------------------------------------------------------------
 # Recursively process a directory
 # --------------------------------------------------------------
-def process_directory_recursive(input_root, output_root, alpha=0.02):
+def process_directory_recursive(input_root, output_root, alpha):
 
     image_paths = glob.glob(os.path.join(input_root, "**/*.*"), recursive=True)
 
