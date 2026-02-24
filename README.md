@@ -132,5 +132,6 @@ See `FigS5S6/README.md` for detailed instructions on clinical image processing.
 If you use this code in your research, please cite the associated paper:
 
 - **DOI**: https://doi.org/10.1007/s11538-026-01598-3
+- **arXiv**: https://arxiv.org/abs/2602.02916
 - **Citation**: Masunaga M, Shimatani R, Shinozaki K, Iida T, Oda Y, Miura T. Mathematical Modeling of Lesion Pattern Formation in Dendritic Keratitis. *Bulletin of Mathematical Biology* (2026). https://doi.org/10.1007/s11538-026-01598-3
 
